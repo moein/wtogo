@@ -5,64 +5,53 @@ var request = require('request');
 var weatherApi = {
     params: {
         url: 'http://api.openweathermap.org/data/2.5',
-        appid: '6fd30e2b38e9e1357faa164404cef5b4'
-    },
-
-    apiGetCityId: function(cityName)
-    {
-        var reqParams = {
-            APPID: this.params.appid,
-            q: cityName
-        };
-
-        var options = {
-            host: this.params.url,
-            path: '/history/city?'+querystring.stringify(reqParams)
-        };
-
-        console.log(options);
-
-        var req = http.get(options, function(res) {
-            //another chunk of data has been recieved, so append it to `str`
-              response.on('data', function (chunk) {
-                str += chunk;
-              });
-
-              //the whole response has been recieved, so we just print it out here
-              response.on('end', function () {
-                console.log(str);
-              });
-
-        }).on('error', function(e) {
-          console.log('Problem with request: ' + e.message);
-        });
-
-
-        req.write('data\n');
-        req.write('data\n');
-        req.end();
+        appid: '6fd30e2b38e9e1357faa164404cef5b4',
+        imgUrl: 'http://openweathermap.org/img/w/'
     },
 
     apiByCityName: function(cityName, startDate, endDate)
     {
+        var self = this;
         var reqParams = {
-            APPID: this.params.appid,
-            q: cityName,
-            type: 'tick',
-            start: startDate,
-            //end: endDate
+            APPID: this.params.appid
+            , q: cityName
+            , type: 'day'
+            , start: startDate
+            , end: endDate
         };
         
         var callUrl = this.params.url + '/history/city?' + querystring.stringify(reqParams);
-        console.log(callUrl);
+
         request(callUrl, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                console.log(body) // Print the google web page.
+                var res = JSON.parse(body);
+                var data = self.prepareData(res.list);
+                require('../lib/response').send(JSON.stringify(data));
             }
+
             else if(error){
                 console.log(error);
             }
         });
+    },
+
+    prepareData: function (data)
+    {
+        var results = {
+            icon: new Array()
+            , 'temp_min': new Array()
+            , 'temp_max': new Array()
+            , 'humidity': new Array()
+        };
+
+        for(i=0 ; i<data.length; i++) {
+            results['icon'].push(data[i]['weather'][0]['icon']);
+            results['temp_min'].push(data[i]['main']['temp_min']- 273.15);
+            results['temp_max'].push(data[i]['main']['temp_max']- 273.15);
+            results['humidity'].push(data[i]['main']['humidity']);
+        }
+
+        return results;
     }
 }
 

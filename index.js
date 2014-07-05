@@ -15,13 +15,15 @@ appGet('/api/top5', function(req){
     require('./app/top5')(req.query);
 });
 
-appGet('/api/weather', function(req){
+appGet('/api/weather', function(req)
+{
+    var app = require('./app/weather');
     req.query = {
         checkin: '20140202',
-        checkout: '20140302',
-        city: 'Palma del Mallorca'
+        checkout: '20140205',
+        city: 'Palma de Mallorca'
     };
-    require('./app/weather').get(req.query);
+    app.get(req.query);
 });
 
 appGet('/api/life-comparison', function(req){
