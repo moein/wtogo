@@ -1,20 +1,20 @@
 var weatherApi = {
-    params {
-        url: 'api.openweathermap.org/data/2.5/'
-        , appid: 'APPID=6fd30e2b38e9e1357faa164404cef5b4'
+    params: {
+        url: 'api.openweathermap.org/data/2.5/',
+        appid: 'APPID=6fd30e2b38e9e1357faa164404cef5b4'
     },
 
-    apiByCityId: function(cityId)
+    apiByCityName: function(cityName, st)
     {
-        var cityParams = 'id='+cityId;
+        var cityParams = 'q='+cityName;
         var options = {
-            host: this.params.url
-            port: 80
-            path: '/history/city?'+this.params.url+'&'+cityParams
+            host: this.params.url,
+            port: 80,
+            path: '/history/city?'+this.params.url+'&'+cityParams,
             method: 'POST'
         };
 
-        var req = request(options, function(res) {
+        var req = http.request(options, function(res) {
           console.log('STATUS: ' + res.statusCode);
           console.log('HEADERS: ' + JSON.stringify(res.headers));
           res.setEncoding('utf8');
@@ -52,12 +52,18 @@ module.exports = {
         }};
 
         return result;
-    }
+    },
 
     call: function(query)
     {
-        var checkin = query.checkin;
-        var checkout = query.checkout;
+        var dateformat = 'YYYYMMDD';
+        var checkin = Date.parseExact(query.checkin, dateformat);
+        var checkout = Date.parseExact(query.checkout, dateformat);
         var city = query.city;
+
+        var querystring = require("querystring");
+        var datejs = require('datejs');
+
+        weatherApi.apiByCityName(querystring.stringify(city), checkin.getTime(), checkout.getTime());
     }
 }
