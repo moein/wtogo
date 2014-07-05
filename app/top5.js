@@ -3,7 +3,7 @@ require('datejs');
 var top5 = (function(){
     
     var TRV_SUGGEST_URL = 'http://www.trivago.com/search/com-US-US/v8_06_04_ac_8318_cache/suggest?q=';
-    var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=bfbcad4b4e0653a46fe2f0314a527691&format=json&tags=';
+    var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.geo.photosForLocation&api_key=bfbcad4b4e0653a46fe2f0314a527691&format=json&lat={lat}&lon={lon}';
     var FLICKR_IMAGE_URL = 'https://farm{farm}.staticflickr.com/{server}/{id}_{secret}.jpg';
     var MAX_RESULT_COUNT = 5;
     
@@ -43,9 +43,15 @@ var top5 = (function(){
         return dateObject.getFullYear().toString() + month + day;
     };
     
-    var getImageUrl = function(cityName, callback) {
-        var url = FLICKR_API_URL + cityName;
+    var getImageUrl = function(longitude, latitude, callback) {
+        callback('');
+        return;
+        var url = FLICKR_API_URL
+                    .replace('{lon}', longitude)
+                    .replace('{lat}', latitude);
+            console.log(url);
         var request = require('request');
+        console.log(url);
         request(url, function(err, response, body){
             if (200 === response.statusCode && null === err) {
                 var photo = parseJsonp(body).photos.photo[0];
@@ -54,7 +60,7 @@ var top5 = (function(){
                                 .replace('{id}', photo.id)
                                 .replace('{farm}', photo.farm)
                                 .replace('{secret}', photo.secret);
-                console.log(imageUrl);
+                
                 callback(imageUrl);
             } else {
                 console.log(err);
@@ -62,19 +68,22 @@ var top5 = (function(){
         });
     };
     
-    var pushResult = function(row, results) {
+    var finishedImages = 0;
+    
+    var pushResult = function(index, row, results) {
         getPathId(row.city_search, function(pathId){
-            getImageUrl(row.city_search, function(imageUrl){
-                results.push({
-                    'path_id': pathId,
-                    'city_name': row.city_search,
-                    'country_name': row.country_search,
-                    'image_url': imageUrl,
-                    'longitude': row.longitude_search,
-                    'latitude': row.latitude_search
-                });
+            results[index] = {
+                'path_id': pathId,
+                'city_name': row.city_search,
+                'country_name': row.country_search,
+                'image_url': '',
+                'longitude': row.longitude_search,
+                'latitude': row.latitude_search
+            };
+            getImageUrl(row.longitude_search, row.latitude_search, function(imageUrl){
+                results[index].image_url = imageUrl;
 
-                if (results.length === MAX_RESULT_COUNT) {
+                if (++finishedImages === MAX_RESULT_COUNT) {
                     require('../lib/response').send(JSON.stringify(results));
                 }
             });
@@ -82,6 +91,7 @@ var top5 = (function(){
     };
     
     var prepareData = function (query, callback) {
+        finishedImages = 0;
         if (query.longitude === undefined || query.latitude === undefined) {
             request = require('request');
             request('http://ipinfo.io', function(err, response, body) {
@@ -110,7 +120,6 @@ var top5 = (function(){
         var latitude = query.latitude;
         
         var historyLimit = 3;
-        var query = 'SELECT city_search, country_search, longitude_search, latitude_search, SUM(count_search) AS count FROM trv_data WHERE platform = "' + platform + '"';
         var conditions = [];
         var caseConditions = [];
         
@@ -139,7 +148,7 @@ var top5 = (function(){
 
         connection.query(query, function(err, rows) {
             for(var i=0; i<rows.length; i++) {
-                pushResult(rows[i], results);
+                pushResult(i, rows[i], results);
             }
         });
     };
