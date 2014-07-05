@@ -24,7 +24,7 @@ appGet('/api/weather', function(req)
             city: 'Paris'
         };
     }
-    require('./app/weather').get(req.query);
+    require('./app/weather')(req.query);
 });
 
 appGet('/api/life-comparison', function(req){
