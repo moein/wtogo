@@ -17,7 +17,6 @@ appGet('/api/top5', function(req){
 
 appGet('/api/weather', function(req)
 {
-    debugger;
     if(req.query.city === undefined) {
         req.query = {
             checkin: '20140502',
