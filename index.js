@@ -7,6 +7,8 @@ var setHeaders = function(res)
     res.header('Access-Control-Allow-Headers', 'Content-Type');
 };
 
+var args = process.argv.slice(2);
+
 app.get('/api/top5', function(req, res){
     var result = require('./app/top5')(req.query);
     setHeaders(res);
@@ -14,11 +16,6 @@ app.get('/api/top5', function(req, res){
 });
 
 app.get('/api/weather', function(req, res){
-    var result = require('./app/weather')(req.query);
-    res.send(JSON.stringify(result));
-});
-
-app.get('/api/weatherTest', function(req, res){
     var app = require('./app/weather');
     setHeaders(res);
     var result = app.demo(req.query);
@@ -35,4 +32,14 @@ app.get('/api/attractions', function(req, res){
     res.send(JSON.stringify(result));
 });
 
-app.listen(3000);
+if(args[0] == undefined)
+{
+    port = 8080;
+}
+else
+{
+    port = args[0];
+}
+
+console.log('Running server on -> localhost:'+port)
+app.listen(port);
