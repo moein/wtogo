@@ -29,18 +29,19 @@ var weatherApi = {
             if (!error && response.statusCode == 200) {
                 var res = JSON.parse(body);
                 var data = self.prepareData(res.list);
-                console.log(data);
-                require('../lib/response').send(JSON.stringify(data));
-            } else if(error) {
-                console.log(error);
-            }
+                var returnResponse = require('../lib/response');
+                returnResponse.send(JSON.stringify(data));
+            } else {
+                if(self.goes > 0) {
+                    self.goes = self.goes - 1;
+                    self.apiByCityName(cityName, startDate, endDate);
+                }
 
-            if(self.goes > 0){
-                self.goes = self.goes - 1;
-                self.apiByCityName(cityName, startDate, endDate);
+                if(error) {
+                    console.log(error);
+                }
             }
         });
-//        require('../lib/response').send(JSON.stringify({}));
     },
 
     prepareData: function (data)
