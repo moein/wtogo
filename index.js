@@ -19,9 +19,9 @@ appGet('/api/weather', function(req)
 {
     var app = require('./app/weather');
     req.query = {
-        checkin: '20140202',
-        checkout: '20140205',
-        city: 'Palma de Mallorca'
+        checkin: '20140502',
+        checkout: '20140503',
+        city: 'London'
     };
     app.get(req.query);
 });
