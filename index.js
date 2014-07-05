@@ -20,7 +20,7 @@ appGet('/api/weather', function(req)
     var app = require('./app/weather');
     req.query = {
         checkin: '20140502',
-        checkout: '20140503',
+        checkout: '20141023',
         city: 'London'
     };
     app.get(req.query);

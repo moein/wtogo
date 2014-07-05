@@ -10,6 +10,8 @@ var weatherApi = {
         imgUrl: 'http://openweathermap.org/img/w'
     },
 
+    goes: 4,
+
     apiByCityName: function(cityName, startDate, endDate)
     {
         var self = this;
@@ -30,8 +32,13 @@ var weatherApi = {
                 require('../lib/response').send(JSON.stringify(data));
             }
 
-            else if(error){
+            else if(error) {
                 console.log(error);
+                if(self.goes > 0)
+                {
+                    self.goes = self.goes - 1;
+                    self.apiByCityName(cityName, startDate, endDate);
+                }
             }
         });
     },
@@ -44,6 +51,7 @@ var weatherApi = {
             , 'temp_min': new Array()
             , 'temp_max': new Array()
             , 'humidity': new Array()
+            , 'wind': new Array()
         };
 
         for(var i=0 ; i<data.length; i++)
@@ -52,6 +60,7 @@ var weatherApi = {
             var temp_min = data[i]['main']['temp_min']- 273.15;
             var temp_max = data[i]['main']['temp_max']- 273.15;
             var humidity = data[i]['main']['humidity'];
+            var wind = data[i]['wind']['speed'];
             var isMorning = true;
 
             if(icon.indexOf('n') == -1 && isMorning === true) { // Exclude night icons
@@ -68,12 +77,14 @@ var weatherApi = {
             results['temp_min'].push(temp_min);
             results['temp_max'].push(temp_max);
             results['humidity'].push(humidity);
+            results['wind'].push(wind);
         }
 
 
         results['temp_max'] = Math.round(_.max(results['temp_max']));
         results['temp_min'] = Math.round(_.min(results['temp_min']));
         results['humidity'] = Math.round((_.max(results['humidity'])+_.min(results['humidity']))/2);
+        results['wind'] = Math.round((_.max(results['wind'])+_.min(results['wind']))/2);
 
         var max = _.max(results['icon'], function(icon){ return icon; });
         _.each(results['icon'], function(count, icon){
@@ -110,8 +121,8 @@ module.exports =
     get: function(query)
     {
         var dateformat = 'yyyymmdd';
-        var checkin = Date.parseExact(query.checkin, dateformat);
-        var checkout = Date.parseExact(query.checkout, dateformat);
+        var checkin = Date.parseExact(query.checkin, dateformat).moveToMonth(12, -1);
+        var checkout = Date.parseExact(query.checkout, dateformat).moveToMonth(12, -1);
         var city = query.city;
 
         //var cityId = weatherApi.apiGetCityId(city);
