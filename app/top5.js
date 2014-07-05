@@ -45,5 +45,5 @@ module.exports =  function(query){
     ]};
 
 
-    return result;
+    require('../lib/response').send(JSON.stringify(result));
 };
