@@ -10,43 +10,10 @@ WTOGO.suggestions = {
 
     suggestionContainer: '',
 
-    userRequest: {},
-
-    userLocation: {},
-
     getSuggestions: function()
     {
-        this.createSuggestionsContainer();
-        this.getRequestInfo();
-    },
-
-    getRequestInfo: function()
-    {
-        this.userRequest.checkin = getURLParameter(encodeURIComponent('aDateRange[arr]')).replace(/-/g, '');
-        this.userRequest.checkout = getURLParameter(encodeURIComponent('aDateRange[dep]')).replace(/-/g, '');
-        var userLocale = $('meta[name=trv-localization]');
-        this.userRequest.locale = userLocale.attr('data-locale');
-
-        this.getLocation();
-    },
-
-    getLocation: function () {
-        if (navigator.geolocation)
-        {
-            return navigator.geolocation.getCurrentPosition(this.setLocation);
-        }
-        else
-        {
-            return false;
-        }
-    },
-
-    setLocation: function (location)
-    {
-        WTOGO.suggestions.userRequest.latitude = location.coords.latitude;
-        WTOGO.suggestions.userRequest.longitude = location.coords.longitude;
-
-        WTOGO.suggestions.getCities();
+        WTOGO.user.getUserInfo();
+        this.getCities();
     },
 
     getCities: function ()
@@ -60,6 +27,7 @@ WTOGO.suggestions = {
             {
                 var response = JSON.parse(data);
                 self.cities = response.result;
+                self.createSuggestionsContainer();
                 self.addCities();
             }
         });
@@ -101,22 +69,15 @@ WTOGO.suggestions = {
         $('.wtogo_suggestion').click( function () {
             $('html, body').animate({ scrollTop: 0 }, 'slow');
 
-            displayLifeComparisonInfo('Barcelona', 'Spain', $(this).attr('data-city'), $(this).attr('data-country'));
+            // @TODO remove this lines when the Google Maps API returns data
+            WTOGO.user.setOriginCity('Barcelona','Spain');
+
+            WTOGO.user.request.destination = {
+                city: $(this).attr('data-city'),
+                country: $(this).attr('data-country')
+            };
+
+            displayComparisonCities(WTOGO.user);
         });
-    }
-}
-
-
-function getURLParameter(sParam)
-{
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++)
-    {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam)
-        {
-            return sParameterName[1];
-        }
     }
 }

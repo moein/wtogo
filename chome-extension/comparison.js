@@ -1,11 +1,11 @@
 function displayComparisonCities(data)
 {
-    var checkin = data.checkin;
-    var checkout = data.checkout;
+    var checkin = data.request.checkin;
+    var checkout = data.request.checkout;
     var origin_city = data.origin.city;
     var origin_country = data.origin.country;
-    var destination_city = data.destination.city;
-    var destination_country = data.destination.country;
+    var destination_city = data.request.destination.city;
+    var destination_country = data.request.destination.country;
 
     $('#js_pricesearch_transparency').show();
     $('#js_itemlist').empty();
