@@ -3,7 +3,7 @@ require('datejs');
 var top5 = (function(){
     
     var TRV_SUGGEST_URL = 'http://www.trivago.com/search/com-US-US/v8_06_04_ac_8318_cache/suggest?q=';
-    var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.geo.photosForLocation&api_key=bfbcad4b4e0653a46fe2f0314a527691&format=json&lat={lat}&lon={lon}';
+    var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=bfbcad4b4e0653a46fe2f0314a527691&format=json&sort=interestingness-desc&tag_mode=all&tags=cityview,';
     var FLICKR_IMAGE_URL = 'https://farm{farm}.staticflickr.com/{server}/{id}_{secret}.jpg';
     var MAX_RESULT_COUNT = 5;
     
@@ -43,13 +43,8 @@ var top5 = (function(){
         return dateObject.getFullYear().toString() + month + day;
     };
     
-    var getImageUrl = function(longitude, latitude, callback) {
-        callback('');
-        return;
-        var url = FLICKR_API_URL
-                    .replace('{lon}', longitude)
-                    .replace('{lat}', latitude);
-            console.log(url);
+    var getImageUrl = function(cityName, callback) {
+        var url = FLICKR_API_URL + cityName;
         var request = require('request');
         console.log(url);
         request(url, function(err, response, body){
@@ -80,7 +75,7 @@ var top5 = (function(){
                 'longitude': row.longitude_search,
                 'latitude': row.latitude_search
             };
-            getImageUrl(row.longitude_search, row.latitude_search, function(imageUrl){
+            getImageUrl(row.city_search, function(imageUrl){
                 results[index].image_url = imageUrl;
 
                 if (++finishedImages === MAX_RESULT_COUNT) {
