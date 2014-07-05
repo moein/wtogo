@@ -1,42 +1,64 @@
+var querystring = require("querystring");
+var datejs = require('datejs');
+var request = require('request');
+
 var weatherApi = {
     params: {
-        url: 'api.openweathermap.org/data/2.5/',
-        appid: 'APPID=6fd30e2b38e9e1357faa164404cef5b4'
+        url: 'http://api.openweathermap.org/data/2.5',
+        appid: '6fd30e2b38e9e1357faa164404cef5b4',
+        imgUrl: 'http://openweathermap.org/img/w/'
     },
 
-    apiByCityName: function(cityName, st)
+    apiByCityName: function(cityName, startDate, endDate)
     {
-        var cityParams = 'q='+cityName;
-        var options = {
-            host: this.params.url,
-            port: 80,
-            path: '/history/city?'+this.params.url+'&'+cityParams,
-            method: 'POST'
+        var self = this;
+        var reqParams = {
+            APPID: this.params.appid
+            , q: cityName
+            , type: 'day'
+            , start: startDate
+            , end: endDate
+        };
+        
+        var callUrl = this.params.url + '/history/city?' + querystring.stringify(reqParams);
+
+        request(callUrl, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                var res = JSON.parse(body);
+                var data = self.prepareData(res.list);
+                require('../lib/response').send(JSON.stringify(data));
+            }
+
+            else if(error){
+                console.log(error);
+            }
+        });
+    },
+
+    prepareData: function (data)
+    {
+        var results = {
+            icon: new Array()
+            , 'temp_min': new Array()
+            , 'temp_max': new Array()
+            , 'humidity': new Array()
         };
 
-        var req = http.request(options, function(res) {
-          console.log('STATUS: ' + res.statusCode);
-          console.log('HEADERS: ' + JSON.stringify(res.headers));
-          res.setEncoding('utf8');
-          res.on('data', function (chunk) {
-            console.log('BODY: ' + chunk);
-          });
-        });
+        for(i=0 ; i<data.length; i++) {
+            results['icon'].push(data[i]['weather'][0]['icon']);
+            results['temp_min'].push(data[i]['main']['temp_min']- 273.15);
+            results['temp_max'].push(data[i]['main']['temp_max']- 273.15);
+            results['humidity'].push(data[i]['main']['humidity']);
+        }
 
-        req.on('error', function(e) {
-          console.log('problem with request: ' + e.message);
-        });
-
-        // write data to request body
-        req.write('data\n');
-        req.write('data\n');
-        req.end();
+        return results;
     }
 }
 
 
 
-module.exports = {
+module.exports = 
+{
     demo : function(query)
     {
         var checkin = query.checkin;
@@ -54,16 +76,14 @@ module.exports = {
         return result;
     },
 
-    call: function(query)
+    get: function(query)
     {
-        var dateformat = 'YYYYMMDD';
+        var dateformat = 'yyyymmdd';
         var checkin = Date.parseExact(query.checkin, dateformat);
         var checkout = Date.parseExact(query.checkout, dateformat);
         var city = query.city;
 
-        var querystring = require("querystring");
-        var datejs = require('datejs');
-
-        weatherApi.apiByCityName(querystring.stringify(city), checkin.getTime(), checkout.getTime());
+        //var cityId = weatherApi.apiGetCityId(city);
+        weatherApi.apiByCityName(city, checkin.getTime()/1000, checkout.getTime()/1000);
     }
 }

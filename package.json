@@ -17,6 +17,10 @@
   },
   "dependencies": {
     "express": "4.x",
-    "datejs": "1.x"
+    "datejs": "1.x",
+    "underscore": "1.6.0",
+    "querystring": "0.2.0",
+    "request": "2.x",
+    "mysql": "*"
   }
 }
