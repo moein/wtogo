@@ -32,7 +32,7 @@ app.get('/api/attractions', function(req, res){
     res.send(JSON.stringify(result));
 });
 
-if(args[0] == undefined)
+if(args[0] === undefined)
 {
     port = 8080;
 }
@@ -41,5 +41,5 @@ else
     port = args[0];
 }
 
-console.log('Running server on -> localhost:'+port)
+console.log('Running server on -> localhost:'+port);
 app.listen(port);
