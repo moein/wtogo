@@ -8,7 +8,7 @@ WTOGO.suggestions = {
 
     cities: [],
 
-    container: '',
+    suggestionContainer: '',
 
     userRequest: {},
 
@@ -16,6 +16,7 @@ WTOGO.suggestions = {
 
     getSuggestions: function()
     {
+        this.createSuggestionsContainer();
         this.getRequestInfo();
     },
 
@@ -59,7 +60,6 @@ WTOGO.suggestions = {
             {
                 var response = JSON.parse(data);
                 self.cities = response.result;
-                self.createSuggestionsContainer();
                 self.addCities();
             }
         });
@@ -76,12 +76,12 @@ WTOGO.suggestions = {
 
         sidebar.append('</ul></div></li>');
 
-        this.container = $('.suggestions');
+        this.suggestionContainer = $('.wtogo_suggestions');
     },
 
     addCities: function ()
     {
-        var self = this;
+        var self = WTOGO.suggestions;
         this.cities.forEach( function (city)
         {
             var cityBlock = '<li class="path wtogo_suggestion" title="' + city.city_name + ', Double Room" data-path="' + city.path_id + '" data-city="' + city.city_name + '" data-country="' + city.country_name + '">';
@@ -91,7 +91,7 @@ WTOGO.suggestions = {
             cityBlock += '<strong>Double Room</strong><span class="chronik_item_visited"></span>';
             cityBlock += '</div></li></ul></div></li>';
 
-            self.container.append(cityBlock);
+            self.suggestionContainer.append(cityBlock);
         });
     }
 }

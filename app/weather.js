@@ -1,12 +1,13 @@
 var querystring = require("querystring");
 var datejs = require('datejs');
 var request = require('request');
+var _ = require('underscore');
 
 var weatherApi = {
     params: {
         url: 'http://api.openweathermap.org/data/2.5',
         appid: '6fd30e2b38e9e1357faa164404cef5b4',
-        imgUrl: 'http://openweathermap.org/img/w/'
+        imgUrl: 'http://openweathermap.org/img/w'
     },
 
     apiByCityName: function(cityName, startDate, endDate)
@@ -37,19 +38,49 @@ var weatherApi = {
 
     prepareData: function (data)
     {
+        var self = this;
         var results = {
-            icon: new Array()
+            icon: {}
             , 'temp_min': new Array()
             , 'temp_max': new Array()
             , 'humidity': new Array()
         };
 
-        for(i=0 ; i<data.length; i++) {
-            results['icon'].push(data[i]['weather'][0]['icon']);
-            results['temp_min'].push(data[i]['main']['temp_min']- 273.15);
-            results['temp_max'].push(data[i]['main']['temp_max']- 273.15);
-            results['humidity'].push(data[i]['main']['humidity']);
+        for(var i=0 ; i<data.length; i++)
+        {
+            var icon = data[i]['weather'][0]['icon'];
+            var temp_min = data[i]['main']['temp_min']- 273.15;
+            var temp_max = data[i]['main']['temp_max']- 273.15;
+            var humidity = data[i]['main']['humidity'];
+            var isMorning = true;
+
+            if(icon.indexOf('n') == -1 && isMorning === true) { // Exclude night icons
+                if(results['icon'][icon] === undefined) {
+                    results['icon'][icon] = 0;
+                } else {
+                    results['icon'][icon] += 1;
+                }
+                isMorning = false;
+            } else {
+                isMorning = true;
+            }
+
+            results['temp_min'].push(temp_min);
+            results['temp_max'].push(temp_max);
+            results['humidity'].push(humidity);
         }
+
+
+        results['temp_max'] = Math.round(_.max(results['temp_max']));
+        results['temp_min'] = Math.round(_.min(results['temp_min']));
+        results['humidity'] = Math.round((_.max(results['humidity'])+_.min(results['humidity']))/2);
+
+        var max = _.max(results['icon'], function(icon){ return icon; });
+        _.each(results['icon'], function(count, icon){
+            if(count == max){
+                results['icon'] = self.params.imgUrl+'/'+icon+'.png';
+            }
+        });
 
         return results;
     }
