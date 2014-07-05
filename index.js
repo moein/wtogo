@@ -2,12 +2,12 @@ var express = require('express');
 var app = express();
 
 app.get('/api/top5', function(req, res){
-    var result = require('./app/top5')(req.query);
+    var result = require('./app/top5').demo(req.query);
     res.send(JSON.stringify(result));
 });
 
 app.get('/api/weather', function(req, res){
-    var result = require('./app/weather')(req.query);
+    var result = require('./app/weather').demo(req.query);
     res.send(JSON.stringify(result));
 });
 
