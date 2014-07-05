@@ -1,14 +1,24 @@
-function displayLifeComparisonInfo(source_city, source_country, destination_city, destination_country)
+function displayComparisonCities(source_city, source_country, destination_city, destination_country, start_date, end_date )
 {
     $('#js_pricesearch_transparency').show();
+    $('#js_itemlist').empty();
+    $('#js_pagination').empty();
 
+    $('.container_itemlist').append('<div class="comparison-cities" > <div class="life-comparison"></div> <div class="weather-comparison"></div> <div class="attractions"></div>  </div>');
+
+    displayLifeComparisonInfo(source_city, source_country, destination_city, destination_country);
+    displayWeatherComparison(source_city, destination_city, start_date, end_date);
+    displayAttractions(source_city);
+    $('#js_pricesearch_transparency').hide();
+}
+
+function displayLifeComparisonInfo(source_city, source_country, destination_city, destination_country)
+{
     var userRequest = {};
     userRequest.source_city = source_city;
     userRequest.source_country = source_country;
-
     userRequest.destination_city = destination_city;
     userRequest.destination_country = destination_country;
-
 
     $.ajax({
         url: 'http://localhost:3000/api/life-comparison',
@@ -18,21 +28,9 @@ function displayLifeComparisonInfo(source_city, source_country, destination_city
         {
             var response = JSON.parse(data);
             addLifeComparisonContent(response.differences, destination_city);
-            addWeatherComparisonContent(destination_city);
-            addAttractionsContent(destination_city);
-            $('#js_pricesearch_transparency').hide();
+
         }
     });
-}
-
-function addWeatherComparisonContent(destination_city)
-{
-    return true;
-}
-
-function addAttractionsContent(destination_city)
-{
-    return true;
 }
 
 function addLifeComparisonContent(differences, destination_city)
@@ -76,18 +74,69 @@ function addLifeComparisonContent(differences, destination_city)
     lifeComparisonHTML += '</table>';
     lifeComparisonHTML += '</div>';
 
-    $('#js_itemlist').empty();
-    $('#js_pagination').empty();
-    $('.container_itemlist').append(lifeComparisonHTML);
+    $('.life-comparison').append(lifeComparisonHTML);
 
 }
 
-function displayWeather()
+function displayWeatherComparison(source_city, destination_city, start_date, end_date)
 {
+    var userRequest = {};
+    userRequest.source_city = source_city;
+    userRequest.start_date = start_date;
+    userRequest.end_date = end_date;
+
+    $.ajax({
+        url: 'http://localhost:3000/api/weather',
+        type: 'GET',
+        data: userRequest,
+        success: function(data)
+        {
+            var response = JSON.parse(data);
+            addWeatherComparisonContent(response.weather, source_city );
+        }
+    });
+
+    var userRequest = {};
+    userRequest.source_city = destination_city;
+    userRequest.start_date = start_date;
+    userRequest.end_date = end_date;
+
+    $.ajax({
+        url: 'http://localhost:3000/api/weather',
+        type: 'GET',
+        data: userRequest,
+        success: function(data)
+        {
+            var response = JSON.parse(data);
+            addWeatherComparisonContent(response.weather, destination_city );
+        }
+    });
 
 }
 
-function displayAttractions()
+function addWeatherComparisonContent(destination_city)
 {
+    return true;
+}
 
+function displayAttractions(source_city)
+{
+    var userRequest = {};
+    userRequest.source_city = source_city;
+
+    $.ajax({
+        url: 'http://localhost:3000/api/attractions',
+        type: 'GET',
+        data: userRequest,
+        success: function(data)
+        {
+            var response = JSON.parse(data);
+            addAttractionsContent(response, source_city );
+        }
+    });
+}
+
+function addAttractionsContent(destination_city)
+{
+    return true;
 }
