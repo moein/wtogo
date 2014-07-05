@@ -121,8 +121,9 @@ module.exports =
     get: function(query)
     {
         var dateformat = 'yyyymmdd';
-        var checkin = Date.parseExact(query.checkin, dateformat).moveToMonth(12, -1);
-        var checkout = Date.parseExact(query.checkout, dateformat).moveToMonth(12, -1);
+        var checkin = Date.parseExact(query.checkin, dateformat).add(-1).years();
+        var checkout = Date.parseExact(query.checkout, dateformat).add(-1).years();
+        console.log(checkin, checkout);
         var city = query.city;
 
         //var cityId = weatherApi.apiGetCityId(city);
