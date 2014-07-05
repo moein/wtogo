@@ -1,13 +1,5 @@
-
-
 console.log('Getting suggestions...');
 
-cities = [];
-getSuggestions();
+var WTOGO = WTOGO || {};
 
-var container = addSuggestionsContainer();
-
-cities.forEach(function(city)
-{
-    addCity(container, city);
-});
+WTOGO.suggestions.getSuggestions();
