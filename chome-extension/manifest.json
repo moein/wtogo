@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "trivagoSuggestions",
+  "version": "1.0",
+  "description": "Extension to provide destination suggestions to trivago users",
+ 
+  "content_scripts": [
+    {
+      "matches": ["http://www.trivago.com/*"],
+      "js": ["jquery.min.js", "comparison.js", "contentscript.js"]
+    }
+  ], 
+ "permissions": 
+    [
+        "unlimitedStorage",
+        "http://*/",
+        "tabs"
+    ]
+}
+
