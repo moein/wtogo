@@ -17,14 +17,15 @@ appGet('/api/top5', function(req){
 
 appGet('/api/weather', function(req)
 {
+    debugger;
     if(req.query.city === undefined) {
         req.query = {
             checkin: '20140502',
             checkout: '20140510',
-            city: 'Paris'
+            city: 'Cordoba, mx'
         };
     }
-    require('./app/weather').get(req.query);
+    require('./app/weather')(req.query);
 });
 
 appGet('/api/life-comparison', function(req){
@@ -33,6 +34,10 @@ appGet('/api/life-comparison', function(req){
 
 appGet('/api/attractions', function(req){
     require('./app/attractions')(req.query);
+});
+
+appGet('/api/city-country', function(req){
+    require('./app/city-country')(req.query);
 });
 
 if(args[0] === undefined)

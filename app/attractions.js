@@ -1,38 +1,60 @@
 module.exports = function(query){
+
+    var resultList = ['root'];
+
+    var photoFunc = function(i, placesList, maxResult){
+        return function(err, response, body) {
+            var element = {};
+            element['name'] = placesList.results[i]['name'];
+            element['address'] = placesList.results[i]['vicinity'];
+
+            var photoData = JSON.parse(response.body);
+            var photoReference = photoData.result.photos[0].photo_reference;
+            
+            var urlPicture = requestUrlPicture + '&photoreference=' + photoReference + '&key=' + KEY;
+            element['picture'] = urlPicture;
+            resultList.push(element);
+
+            if (resultList.length == maxResult+1) {
+                resultList = JSON.stringify(resultList);
+
+                var resp = require('../lib/response');
+                resp.send(resultList);
+            }
+        }
+    };
+
     var latitude = query.latitude;
     var longitude = query.longitude;
     var KEY = 'AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
 
-    var requestedUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    var requestedUrlPlaces = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
 
-    requestedUrl += 'location=' + latitude + ',' + longitude;
-    requestedUrl += '&radius=20000';
-    requestedUrl += '&rankby=prominence';
-    requestedUrl += '&types=stadium|aquarium|art_gallery|church|museum|zoo';
-    requestedUrl += '&key=AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
+    requestedUrlPlaces += 'location=' + latitude + ',' + longitude;
+    requestedUrlPlaces += '&radius=50000';
+    requestedUrlPlaces += '&rankby=prominence';
+    requestedUrlPlaces += '&types=stadium|aquarium|art_gallery|church|museum|zoo';
+    requestedUrlPlaces += '&key=AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
+
+    var requestUrlDetails = 'https://maps.googleapis.com/maps/api/place/details/json?';
+    var requestUrlPicture = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=200';
 
     var request = require('request');
 
-    request(requestedUrl, function(err, response, body) {
-        if (200 == response.statusCode && null === err) {
-
-            var jsonData = JSON.parse(response.body);
-            var resultList = [];
-
-            for (var i = 0; i < jsonData.results.length; i++) {
-                var name = jsonData.results[i]['name'];
-                var address = jsonData.results[i]['vicinity'];
-                var result = {};
-                result['name'] = name;
-                result['address'] = address;
-                resultList.push(result);
+    request(requestedUrlPlaces, function(err, response, body) {
+        if (200 === response.statusCode && null === err) {
+            var placesList = JSON.parse(response.body);
+            var length  = placesList.results.length;
+            var maxResult = (length < 5 ) ? length : 5;
+            
+            for (var i = 0; i < maxResult; i++)
+            {
+                var url = requestUrlDetails + 'placeid=' + placesList.results[i]['place_id'] + '&key=' + KEY;
+                request(url, photoFunc(i, placesList, maxResult));
             }
-
-            resultList = JSON.stringify(resultList);
-
-            var resp = require('../lib/response');
-            resp.send(resultList);
-        } else {
+        }
+        else 
+        {
             return err;
         }
     });
