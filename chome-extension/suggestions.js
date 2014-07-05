@@ -8,7 +8,7 @@ function getSuggestions()
 
     $.ajax({
         url: 'http://192.168.5.120:3000/api/top5',
-        type: 'POST',
+        type: 'GET',
         data: JSON.stringify(userRequest),
         async: false,
         success: function(data)
