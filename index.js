@@ -26,7 +26,8 @@ app.get('/api/weatherTest', function(req, res){
 });
 
 app.get('/api/life-comparison', function(req, res){
-    var result = require('./app/life-comparison')(req.query);
+    var result = require('./app/life-comparison')(req.query, res);
+    setHeaders(res);
     res.send(JSON.stringify(result));
 });
 
@@ -35,4 +36,6 @@ app.get('/api/attractions', function(req, res){
     res.send(JSON.stringify(result));
 });
 
-app.listen(3000);
+app.listen(3000, function() {
+    console.log('hey I am running');
+});
