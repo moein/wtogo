@@ -1,0 +1,21 @@
+{
+  "name": "wtogo",
+  "version": "0.0.1",
+  "description": "An awesome project to make trivago better",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moein/wtogo.git"
+  },
+  "author": "gabmajm",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/moein/wtogo/issues"
+  },
+  "dependencies": {
+    "express": "4.x"
+  }
+}
