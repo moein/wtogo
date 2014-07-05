@@ -1,27 +1,39 @@
 module.exports = function(query){
-    var city = query.city;
+    var latitude = query.latitude;
+    var longitude = query.longitude;
+    var KEY = 'AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
 
-    //Do your shit here
+    var requestedUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
 
-    var result = {
-        "attractions": [
-            {
-                "id": 1,
-                "name": "Parque del retiro",
-                "image": "retiro.jpg"
-            },
-            {
-                "id": 2,
-                "name": "Parque del retiro jesus",
-                "image": "retiro.jpg"
-            },
-            {
-                "id": 3,
-                "name": "Parque del retiro antonio",
-                "image": "retiro.jpg"
-            },
-        ]
-    };
+    requestedUrl += 'location=' + latitude + ',' + longitude;
+    requestedUrl += '&radius=20000';
+    requestedUrl += '&rankby=prominence';
+    requestedUrl += '&types=stadium|aquarium|art_gallery|church|museum|zoo';
+    requestedUrl += '&key=AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
 
-    return result;
+    var request = require('request');
+
+    request(requestedUrl, function(err, response, body) {
+        if (200 == response.statusCode && null === err) {
+
+            var jsonData = JSON.parse(response.body);
+            var resultList = [];
+
+            for (var i = 0; i < jsonData.results.length; i++) {
+                var name = jsonData.results[i]['name'];
+                var address = jsonData.results[i]['vicinity'];
+                var result = {};
+                result['name'] = name;
+                result['address'] = address;
+                resultList.push(result);
+            }
+
+            resultList = JSON.stringify(resultList);
+
+            var resp = require('../lib/response');
+            resp.send(resultList);
+        } else {
+            return err;
+        }
+    });
 };
