@@ -17,11 +17,12 @@ appGet('/api/top5', function(req){
 
 appGet('/api/weather', function(req)
 {
+    debugger;
     if(req.query.city === undefined) {
         req.query = {
             checkin: '20140502',
             checkout: '20140510',
-            city: 'Paris'
+            city: 'Cordoba, mx'
         };
     }
     require('./app/weather')(req.query);
@@ -36,7 +37,6 @@ appGet('/api/attractions', function(req){
 });
 
 appGet('/api/city-country', function(req){
-    console.log('hegfhgah');
     require('./app/city-country')(req.query);
 });
 
