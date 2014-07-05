@@ -116,8 +116,8 @@ module.exports = function(query) {
     }
 
     var dateformat = 'yyyyMMdd';
-    var checkin = Date.parseExact(query.checkin, dateformat).add(-1).years();
-    var checkout = Date.parseExact(query.checkout, dateformat).add(-1).years();
+    var checkin = Date.parseExact(query.checkin, dateformat).addYears(-1);
+    var checkout = Date.parseExact(query.checkout, dateformat).addYears(-1);
     var city = query.city;
 
     //var cityId = weatherApi.apiGetCityId(city);
