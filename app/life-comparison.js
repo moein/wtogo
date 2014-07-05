@@ -20,20 +20,28 @@ var lifeComparison = {
         requestedUrl += '&city2=' + destination.city;
 
         var request = require('request');
-        var result;
 
         request(requestedUrl, function(err, response, body) {
             if (200 === response.statusCode && null === err) {
-                var responseText = JSON.stringify(self.filterData(JSON.parse(response.body), response.statusCode));
-                var response = require('../lib/response');
-                response.send(responseText);
+
+                var resObjBody = JSON.parse(response.body);
+
+                if (source.city === resObjBody.results['collection2'].source_city
+                     && destination.city === resObjBody.results['collection2'].destination_city){
+                    var returnResponse = require('../lib/response');
+                    var responseText = JSON.stringify(self.filterData(resObjBody.body, response.statusCode));
+                    returnResponse.send(responseText);
+                } else {
+                    self.sendErrorMessage();
+                }
             } else {
-                return err;
+                self.sendErrorMessage();
             }
         });
     },
 
     filterData: function(responseBody, status) {
+
         var self = this;
         var _ = require('underscore');
         var data = _.filter(responseBody.results['collection1'], function(itemObj) {
@@ -48,22 +56,37 @@ var lifeComparison = {
         }
     },
 
+    sendErrorMessage: function() {
+
+        var returnResponse = require('../lib/response');
+        var responseText = {status: 500, msg: "Check the values please"};
+        console.log(responseText);
+        returnResponse.send(JSON.stringify(responseText));
+    }
+
 }
 
 
 module.exports = function(query){
     var config = require('../config/config');
-
-    var source = {
-        city: query.source_city,
-        country: query.source_country
-    };
-
-    var destination = {
-        city: query.destination_city,
-        country: query.destination_country
+    if (undefined !== query.source_city && undefined !== query.source_country) {
+        var source = {
+            city: query.source_city,
+            country: query.source_country
+        };
     }
 
-    lifeComparison.getData(source, destination, config);
+    if (undefined !== query.destination_city && undefined !== query.destination_country) {
+        var destination = {
+            city: query.destination_city,
+            country: query.destination_country
+        };
+    }
+
+    if (undefined !== source && undefined !== destination) {
+        lifeComparison.getData(source, destination, config);
+    } else {
+        lifeComparison.sendErrorMessage();
+    }
 
 };
