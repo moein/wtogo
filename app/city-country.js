@@ -16,7 +16,6 @@ module.exports = function(query) {
             var resObjBody = JSON.parse(body);
             var results = resObjBody.results;
 
-            console.log(results);
             var response = {
                 region: undefined
                 , city: undefined

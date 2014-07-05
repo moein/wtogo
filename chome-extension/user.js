@@ -8,7 +8,7 @@ WTOGO.user = {
         this.request.checkin = getURLParameter(encodeURIComponent('aDateRange[arr]')).replace(/-/g, '');
         this.request.checkout = getURLParameter(encodeURIComponent('aDateRange[dep]')).replace(/-/g, '');
         var userLocale = $('meta[name=trv-localization]');
-        this.locale = userLocale.attr('data-locale');
+        this.request.platform = userLocale.attr('data-locale');
 
         this.getLocation();
     },
@@ -31,7 +31,7 @@ WTOGO.user = {
             longitude: location.coords.longitude
         };
         console.log("User location:" + location.coords.latitude + ',' + location.coords.longitude);
-        getCity(location.coords.latitude, location.coords.longitude);
+        WTOGO.user.getCurrentCity(location.coords.latitude, location.coords.longitude);
     },
 
     setOriginCity: function (city, country) {
@@ -45,13 +45,13 @@ WTOGO.user = {
     {
         var self = this;
         $.ajax({
-            url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitud + ',' + longitude + '&key=AIzaSyBa0a0aPIoqUAulfB-4mLsz91E_m535bxQ',
+            url: 'http://localhost:3000/api/city-country?lat=' + latitud + '&lng=' + longitude,
             type: 'GET',
             async: false,
             success: function(data)
             {
                 var response = JSON.parse(data);
-                self.setOriginCity(response.result.city, response.result.country)
+                self.setOriginCity(response.city, response.country)
             }
         });
     }
