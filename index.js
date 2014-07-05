@@ -17,16 +17,14 @@ appGet('/api/top5', function(req){
 
 appGet('/api/weather', function(req)
 {
-    var app = require('./app/weather');
-    if(req.query.city === undefined)
-    {
+    if(req.query.city === undefined) {
         req.query = {
             checkin: '20140502',
-            checkout: '20141023',
-            city: 'London'
+            checkout: '20140510',
+            city: 'Paris'
         };
     }
-    app.get(req.query);
+    require('./app/weather').get(req.query);
 });
 
 appGet('/api/life-comparison', function(req){

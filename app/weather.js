@@ -29,15 +29,16 @@ var weatherApi = {
             if (!error && response.statusCode == 200) {
                 var res = JSON.parse(body);
                 var data = self.prepareData(res.list);
-                require('../lib/response').send(JSON.stringify(data));
-            }
-
-            else if(error) {
-                console.log(error);
-                if(self.goes > 0)
-                {
+                var returnResponse = require('../lib/response');
+                returnResponse.send(JSON.stringify(data));
+            } else {
+                if(self.goes > 0) {
                     self.goes = self.goes - 1;
                     self.apiByCityName(cityName, startDate, endDate);
+                }
+
+                if(error) {
+                    console.log(error);
                 }
             }
         });
@@ -45,6 +46,13 @@ var weatherApi = {
 
     prepareData: function (data)
     {
+        var calculateAvg = function(items) {
+            var total = 0;
+            _.each(items, function(num){
+                total += num;
+            });
+            return total/items.length;
+        };
         var self = this;
         var results = {
             icon: {}
@@ -74,16 +82,25 @@ var weatherApi = {
                 isMorning = true;
             }
 
-            results['temp_min'].push(temp_min);
-            results['temp_max'].push(temp_max);
-            results['humidity'].push(humidity);
-            results['wind'].push(wind);
+            if(temp_min !== undefined) {
+                results['temp_min'].push(temp_min);
+            }
+            if(temp_max !== undefined) {
+                results['temp_max'].push(temp_max);
+            }
+            if(humidity !== undefined) {
+                results['humidity'].push(humidity);
+            }
+            if(wind !== undefined) {
+                results['wind'].push(wind);
+            }
         }
 
 
+        results['temp_avg'] = Math.round((calculateAvg(results['temp_min']) + calculateAvg(results['temp_max'])) / 2);
         results['temp_max'] = Math.round(_.max(results['temp_max']));
         results['temp_min'] = Math.round(_.min(results['temp_min']));
-        results['humidity'] = Math.round((_.max(results['humidity'])+_.min(results['humidity']))/2);
+        results['humidity'] = Math.round(calculateAvg(results['humidity']));
         results['wind'] = Math.round((_.max(results['wind'])+_.min(results['wind']))/2);
 
         var max = _.max(results['icon'], function(icon){ return icon; });
@@ -120,9 +137,10 @@ module.exports =
 
     get: function(query)
     {
-        var dateformat = 'yyyymmdd';
-        var checkin = Date.parseExact(query.checkin, dateformat).moveToMonth(12, -1);
-        var checkout = Date.parseExact(query.checkout, dateformat).moveToMonth(12, -1);
+        var dateformat = 'yyyyMMdd';
+
+        var checkin = Date.parseExact(query.checkin, dateformat).add(-1).years();
+        var checkout = Date.parseExact(query.checkout, dateformat).add(-1).years();
         var city = query.city;
 
         //var cityId = weatherApi.apiGetCityId(city);
