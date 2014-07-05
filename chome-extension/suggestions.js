@@ -18,6 +18,8 @@ WTOGO.suggestions = {
 
     getCities: function ()
     {
+        console.log('Getting suggestions...');
+
         var self = this;
         $.ajax({
             url: 'http://' + this.api.url + this.api.port + '/api/top5',
@@ -52,7 +54,7 @@ WTOGO.suggestions = {
         var self = WTOGO.suggestions;
         this.cities.forEach( function (city)
         {
-            var cityBlock = '<li class="path wtogo_suggestion" title="' + city.city_name + ', Double Room" data-path="' + city.path_id + '" data-city="' + city.city_name + '" data-country="' + city.country_name + '">';
+            var cityBlock = '<li class="path wtogo_suggestion" title="' + city.city_name + ', Double Room" data-path="' + city.path_id + '" data-city="' + city.city_name + '" data-country="' + city.country_name + '" data-latitude="' + city.latitude + '" data-longitude="' + city.longitude + '">';
             cityBlock += '<div class="info">';
             cityBlock += '<img width="30" height="30" src="' + city.image_url + '" alt="">';
             cityBlock += '<div class="js_sidebaritem_city sidebaritem_city_text_wrap">' + city.city_name + ', <strong>' + city.country_name + '</strong></div>';
