@@ -15,13 +15,18 @@ appGet('/api/top5', function(req){
     require('./app/top5')(req.query);
 });
 
-appGet('/api/weather', function(req){
-    req.query = {
-        checkin: '20140202',
-        checkout: '20140302',
-        city: 'Palma del Mallorca'
-    };
-    require('./app/weather').get(req.query);
+appGet('/api/weather', function(req)
+{
+    var app = require('./app/weather');
+    if(req.query.city === undefined)
+    {
+        req.query = {
+            checkin: '20140502',
+            checkout: '20141023',
+            city: 'London'
+        };
+    }
+    app.get(req.query);
 });
 
 appGet('/api/life-comparison', function(req){
