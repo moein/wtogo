@@ -20,14 +20,13 @@ var lifeComparison = {
         requestedUrl += '&city2=' + destination.city;
 
         var request = require('request');
+        var result;
 
-        console.log(requestedUrl);
         request(requestedUrl, function(err, response, body) {
-            console.log(response.body);
-            console.log(response.statusCode);
-            if (200 == response.statusCode && null === err) {
-                console.log('getting here');
-                return self.filterData(response.body);
+            if (200 === response.statusCode && null === err) {
+                var responseText = JSON.stringify(self.filterData(JSON.parse(response.body)));
+                var response = require('../lib/response');
+                response.send(responseText);
             } else {
                 return err;
             }
@@ -36,13 +35,12 @@ var lifeComparison = {
 
     filterData: function(responseBody) {
         var self = this;
-        console.log(responseBody.results);
         var _ = require('underscore');
-        // return _.map(responseBody.results['collection1'], function(itemObj) {
-        //     if (-1 < _.indexOf(self.desiredItems, itemObj.item)){
-        //         return itemObj;
-        //     }
-        // });
+        return _.filter(responseBody.results['collection1'], function(itemObj) {
+            if (-1 < _.indexOf(self.desiredItems, itemObj.item)){
+                return itemObj;
+            }
+        });
     },
 
 }
@@ -65,7 +63,6 @@ module.exports = function(query){
     //     } else {
     //         return err;
     //     }
-    // });
     // var source = {
     //     city: query.source_city,
     //     country: query.source_country
@@ -83,15 +80,14 @@ module.exports = function(query){
     var destination = {
         city: 'Dusseldorf',
         country: 'Germany'
-    }
+    };
 
 
+    // });
 
     //Do your shit here
 
     var differences = lifeComparison.getData(source, destination, config);
-
-    console.log(differences);
 
     var result = {"differences": [
         {
@@ -102,9 +98,8 @@ module.exports = function(query){
         {
             "item": "Meal, Inexpensive Restaurant",
             "source": "10.5 €",
-            "destination": "11 €"
         }
     ]};
 
-    return result;
+    return {"differences": differences};
 };

@@ -1,41 +1,41 @@
 var express = require('express');
 var app = express();
-var setHeaders = function(res)
+
+var args = process.argv.slice(2);
+
+function appGet(uri, func) {
+    app.get(uri, function(req, res){
+        var response = require('./lib/response');
+        response.init(res);
+        func(req);
+    });
+}
+
+appGet('/api/top5', function(req){
+    require('./app/top5')(req.query);
+});
+
+appGet('/api/weather', function(req){
+    require('./app/weather').demo(req.query);
+});
+
+appGet('/api/life-comparison', function(req){
+    require('./app/life-comparison')(req.query);
+});
+
+appGet('/api/attractions', function(req){
+    require('./app/attractions')(req.query);
+});
+
+if(args[0] === undefined)
 {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-};
+    port = 3000;
+}
+else
+{
+    port = args[0];
+}
 
-app.get('/api/top5', function(req, res){
-    var result = require('./app/top5')(req.query);
-    setHeaders(res);
-    res.send(JSON.stringify(result));
-});
-
-app.get('/api/weather', function(req, res){
-    var result = require('./app/weather')(req.query);
-    res.send(JSON.stringify(result));
-});
-
-app.get('/api/weatherTest', function(req, res){
-    var app = require('./app/weather');
-    setHeaders(res);
-    var result = app.demo(req.query);
-    res.send(JSON.stringify(result));
-});
-
-app.get('/api/life-comparison', function(req, res){
-    var result = require('./app/life-comparison')(req.query, res);
-    setHeaders(res);
-    res.send(JSON.stringify(result));
-});
-
-app.get('/api/attractions', function(req, res){
-    var result = require('./app/attractions')(req.query);
-    res.send(JSON.stringify(result));
-});
-
-app.listen(3000, function() {
-    console.log('hey I am running');
+app.listen(port, function() {
+    console.log('Hey I am running on http://localhost:' + port);
 });
