@@ -1,0 +1,8 @@
+.life-comparison { padding: 0 42px; }
+    .life-comparison h2 { color: #333; font-weight: bold; font-size: 26px; padding: 10px 0; }
+    .life-comparison h3 { color: #333; font-weight: bold; font-size: 18px; padding: 10px 0; }
+    .life-comparison table { width: 100%; }
+        .life-comparison table td { padding: 10px 7px; border-bottom: 1px solid #eee; text-align: center}
+        .life-comparison table td:first-child { text-align: left; }
+        .life-comparison table td.redlife { color: red; }
+        .life-comparison table td.greenlife { color: green; font-weight: bold; }

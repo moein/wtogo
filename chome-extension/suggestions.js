@@ -71,7 +71,7 @@ WTOGO.suggestions = {
 
         $('.history').remove('last');
 
-        sidebar.append('<li class="sidebar_element history last" data-state="history"><div>Custom suggestions</div></li>');
+        sidebar.append('<li class="sidebar_element history last" data-state="history"><div>Custom suggestions for you</div></li>');
         sidebar.append('<li class="sidebar_display"><div id="js_right_bar_history"><ul class="city_list history wtogo_suggestions">');
 
         sidebar.append('</ul></div></li>');
@@ -92,6 +92,16 @@ WTOGO.suggestions = {
             cityBlock += '</div></li></ul></div></li>';
 
             self.suggestionContainer.append(cityBlock);
+        });
+
+        self.addClickListener();
+    },
+
+    addClickListener: function () {
+        $('.wtogo_suggestion').click( function () {
+            $('html, body').animate({ scrollTop: 0 }, 'slow');
+
+            displayLifeComparisonInfo('Barcelona', 'Spain', $(this).attr('data-city'), $(this).attr('data-country'));
         });
     }
 }
