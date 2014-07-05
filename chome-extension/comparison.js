@@ -1,22 +1,29 @@
-function displayComparisonCities(source_city, source_country, destination_city, destination_country, start_date, end_date )
+function displayComparisonCities(data)
 {
+    var checkin = data.request.checkin;
+    var checkout = data.request.checkout;
+    var origin_city = data.origin.city;
+    var origin_country = data.origin.country;
+    var destination_city = data.request.destination.city;
+    var destination_country = data.request.destination.country;
+
     $('#js_pricesearch_transparency').show();
     $('#js_itemlist').empty();
     $('#js_pagination').empty();
 
     $('.container_itemlist').append('<div class="comparison-cities" > <div class="life-comparison"></div> <div class="weather-comparison"></div> <div class="attractions"></div>  </div>');
 
-    displayLifeComparisonInfo(source_city, source_country, destination_city, destination_country);
-    displayWeatherComparison(source_city, destination_city, start_date, end_date);
-    displayAttractions(source_city);
+    displayLifeComparisonInfo(origin_city, origin_country, destination_city, destination_country);
+    displayWeatherComparison(origin_city, destination_city, checkin, checkout);
+    displayAttractions(data);
     $('#js_pricesearch_transparency').hide();
 }
 
-function displayLifeComparisonInfo(source_city, source_country, destination_city, destination_country)
+function displayLifeComparisonInfo(origin_city, origin_country, destination_city, destination_country)
 {
     var userRequest = {};
-    userRequest.source_city = source_city;
-    userRequest.source_country = source_country;
+    userRequest.source_city = origin_city;
+    userRequest.source_country = origin_country;
     userRequest.destination_city = destination_city;
     userRequest.destination_country = destination_country;
 
@@ -78,12 +85,12 @@ function addLifeComparisonContent(differences, destination_city)
 
 }
 
-function displayWeatherComparison(source_city, destination_city, start_date, end_date)
+function displayWeatherComparison(origin_city, destination_city, checkin, checkout)
 {
     var userRequest = {};
-    userRequest.source_city = source_city;
-    userRequest.start_date = start_date;
-    userRequest.end_date = end_date;
+    userRequest.city = origin_city;
+    userRequest.checkin = checkin;
+    userRequest.checkout = checkout;
 
     $.ajax({
         url: 'http://localhost:3000/api/weather',
@@ -92,14 +99,14 @@ function displayWeatherComparison(source_city, destination_city, start_date, end
         success: function(data)
         {
             var response = JSON.parse(data);
-            addWeatherComparisonContent(response.weather, source_city );
+            addWeatherComparisonContent(response.weather, origin_city );
         }
     });
 
     var userRequest = {};
-    userRequest.source_city = destination_city;
-    userRequest.start_date = start_date;
-    userRequest.end_date = end_date;
+    userRequest.city = destination_city;
+    userRequest.checkin = checkin;
+    userRequest.checkout = checkout;
 
     $.ajax({
         url: 'http://localhost:3000/api/weather',
@@ -111,15 +118,14 @@ function displayWeatherComparison(source_city, destination_city, start_date, end
             addWeatherComparisonContent(response.weather, destination_city );
         }
     });
-
 }
 
-function addWeatherComparisonContent(destination_city)
+function addWeatherComparisonContent(weather, city)
 {
     return true;
 }
 
-function displayAttractions(source_city)
+function displayAttractions(origin_city)
 {
     var userRequest = {};
     userRequest.source_city = source_city;

@@ -35,6 +35,11 @@ appGet('/api/attractions', function(req){
     require('./app/attractions')(req.query);
 });
 
+appGet('/api/city-country', function(req){
+    console.log('hegfhgah');
+    require('./app/city-country')(req.query);
+});
+
 if(args[0] === undefined)
 {
     port = 3000;
