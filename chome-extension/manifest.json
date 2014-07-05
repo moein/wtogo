@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "Hello World!",
+  "version": "1.0",
+  "description": "My first Chrome extension.",
+ 
+  "content_scripts": [
+    {
+      "matches": ["http://www.trivago.com/*"],
+      "js": ["jquery.min.js", "contentscript.js"]
+    }
+  ], 
+ "permissions": 
+    [
+        "unlimitedStorage",
+        "http://*/",
+        "tabs"
+    ]
+}
+
