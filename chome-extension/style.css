@@ -1,8 +1,14 @@
-.life-comparison { padding: 0 42px; }
-    .life-comparison h2 { color: #333; font-weight: bold; font-size: 26px; padding: 10px 0; }
-    .life-comparison h3 { color: #333; font-weight: bold; font-size: 18px; padding: 10px 0; }
-    .life-comparison table { width: 100%; }
-        .life-comparison table td { padding: 10px 7px; border-bottom: 1px solid #eee; text-align: center}
-        .life-comparison table td:first-child { text-align: left; }
-        .life-comparison table td.redlife { color: red; }
-        .life-comparison table td.greenlife { color: green; font-weight: bold; }
+.comparison-cities { padding: 0 42px; }
+    .comparison-cities h2 { color: #333; font-weight: bold; font-size: 26px; padding: 20px 0 0; }
+    .comparison-cities h3 { color: #333; font-weight: bold; font-size: 18px; padding: 20px 0 5px; }
+    .comparison-cities table { width: 100%; }
+        .comparison-cities table td { padding: 10px 7px; border-bottom: 1px solid #eee; text-align: center}
+        .comparison-cities table td:first-child { text-align: left; }
+        .comparison-cities table td.redlife { color: red; }
+        .comparison-cities table td.greenlife { color: green; font-weight: bold; }
+
+    .wtogo_attraction { width: 20%; box-sizing: border-box; text-align: center; float: left; }
+        .wtogo_attraction .container { padding-right: 10px; }
+            .wtogo_attraction img { width: 100%; }
+            .wtogo_attraction p.name { font-size: 100%; font-weight: bold; }
+            .wtogo_attraction p.address { font-size: 70%; }
