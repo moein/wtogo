@@ -3,7 +3,7 @@ var app = express();
 var setHeaders = function(res)
 {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Methods', 'GET,POST');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
 };
 
@@ -18,7 +18,12 @@ app.get('/api/top5', function(req, res){
 app.get('/api/weather', function(req, res){
     var app = require('./app/weather');
     setHeaders(res);
-    var result = app.demo(req.query);
+    req.query = {
+        checkin: '20140202',
+        checkout: '20140302',
+        city: 'Palma del Mallorca'
+    };
+    var result = app.get(req.query);
     res.send(JSON.stringify(result));
 });
 
