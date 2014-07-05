@@ -10,19 +10,51 @@ WTOGO.suggestions = {
 
     container: '',
 
-    getSuggestions: function ()
+    userRequest: {},
+
+    userLocation: {},
+
+    getSuggestions: function()
+    {
+        this.getRequestInfo();
+    },
+
+    getRequestInfo: function()
+    {
+        this.userRequest.checkin = getURLParameter(encodeURIComponent('aDateRange[arr]')).replace(/-/g, '');
+        this.userRequest.checkout = getURLParameter(encodeURIComponent('aDateRange[dep]')).replace(/-/g, '');
+        var userLocale = $('meta[name=trv-localization]');
+        this.userRequest.locale = userLocale.attr('data-locale');
+
+        this.getLocation();
+    },
+
+    getLocation: function () {
+        if (navigator.geolocation)
+        {
+            return navigator.geolocation.getCurrentPosition(this.setLocation);
+        }
+        else
+        {
+            return false;
+        }
+    },
+
+    setLocation: function (location)
+    {
+        WTOGO.suggestions.userRequest.latitude = location.coords.latitude;
+        WTOGO.suggestions.userRequest.longitude = location.coords.longitude;
+
+        WTOGO.suggestions.getCities();
+    },
+
+    getCities: function ()
     {
         var self = this;
-        var userRequest = {};
-        userRequest.checkin = getURLParameter(encodeURIComponent('aDateRange[arr]')).replace(/-/g, '');
-        userRequest.checkout = getURLParameter(encodeURIComponent('aDateRange[dep]')).replace(/-/g, '');
-        var userLocale = $('meta[name=trv-localization]');
-        userRequest.locale = userLocale.attr('data-locale');
-
         $.ajax({
             url: 'http://' + this.api.url + this.api.port + '/api/top5',
             type: 'GET',
-            data: userRequest,
+            data: this.userRequest,
             success: function(data)
             {
                 var response = JSON.parse(data);
@@ -52,7 +84,7 @@ WTOGO.suggestions = {
         var self = this;
         this.cities.forEach( function (city)
         {
-            var cityBlock = '<li class="path wtogo_suggestion" title="' + city.city_name + ', Double Room" data-path="' + city.path_id + '">';
+            var cityBlock = '<li class="path wtogo_suggestion" title="' + city.city_name + ', Double Room" data-path="' + city.path_id + '" data-city="' + city.city_name + '" data-country="' + city.country_name + '">';
             cityBlock += '<div class="info">';
             cityBlock += '<img width="30" height="30" src="' + city.image_url + '" alt="">';
             cityBlock += '<div class="js_sidebaritem_city sidebaritem_city_text_wrap">' + city.city_name + ', <strong>' + city.country_name + '</strong></div>';
