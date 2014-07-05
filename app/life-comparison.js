@@ -26,10 +26,10 @@ var lifeComparison = {
 
                 var resObjBody = JSON.parse(response.body);
 
-                if (source.city === resObjBody.results['collection2'].source_city
-                     && destination.city === resObjBody.results['collection2'].destination_city){
+                if (source.city.toLowerCase() === resObjBody.results['collection2'][0].source_city.toLowerCase()
+                     && destination.city.toLowerCase() === resObjBody.results['collection2'][0].destination_city.toLowerCase()){
                     var returnResponse = require('../lib/response');
-                    var responseText = JSON.stringify(self.filterData(resObjBody.body, response.statusCode));
+                    var responseText = JSON.stringify(self.filterData(resObjBody, response.statusCode));
                     returnResponse.send(responseText);
                 } else {
                     self.sendErrorMessage();
@@ -44,6 +44,7 @@ var lifeComparison = {
 
         var self = this;
         var _ = require('underscore');
+
         var data = _.filter(responseBody.results['collection1'], function(itemObj) {
             if (-1 < _.indexOf(self.desiredItems, itemObj.item)){
                 return itemObj;
