@@ -1,42 +1,75 @@
+var querystring = require("querystring");
+var datejs = require('datejs');
+var request = require('request');
+
 var weatherApi = {
     params: {
-        url: 'api.openweathermap.org/data/2.5/',
-        appid: 'APPID=6fd30e2b38e9e1357faa164404cef5b4'
+        url: 'http://api.openweathermap.org/data/2.5',
+        appid: '6fd30e2b38e9e1357faa164404cef5b4'
     },
 
-    apiByCityName: function(cityName, st)
+    apiGetCityId: function(cityName)
     {
-        var cityParams = 'q='+cityName;
-        var options = {
-            host: this.params.url,
-            port: 80,
-            path: '/history/city?'+this.params.url+'&'+cityParams,
-            method: 'POST'
+        var reqParams = {
+            APPID: this.params.appid,
+            q: cityName
         };
 
-        var req = http.request(options, function(res) {
-          console.log('STATUS: ' + res.statusCode);
-          console.log('HEADERS: ' + JSON.stringify(res.headers));
-          res.setEncoding('utf8');
-          res.on('data', function (chunk) {
-            console.log('BODY: ' + chunk);
-          });
+        var options = {
+            host: this.params.url,
+            path: '/history/city?'+querystring.stringify(reqParams)
+        };
+
+        console.log(options);
+
+        var req = http.get(options, function(res) {
+            //another chunk of data has been recieved, so append it to `str`
+              response.on('data', function (chunk) {
+                str += chunk;
+              });
+
+              //the whole response has been recieved, so we just print it out here
+              response.on('end', function () {
+                console.log(str);
+              });
+
+        }).on('error', function(e) {
+          console.log('Problem with request: ' + e.message);
         });
 
-        req.on('error', function(e) {
-          console.log('problem with request: ' + e.message);
-        });
 
-        // write data to request body
         req.write('data\n');
         req.write('data\n');
         req.end();
+    },
+
+    apiByCityName: function(cityName, startDate, endDate)
+    {
+        var reqParams = {
+            APPID: this.params.appid,
+            q: cityName,
+            type: 'tick',
+            start: startDate,
+            //end: endDate
+        };
+        
+        var callUrl = this.params.url + '/history/city?' + querystring.stringify(reqParams);
+        console.log(callUrl);
+        request(callUrl, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log(body) // Print the google web page.
+            }
+            else if(error){
+                console.log(error);
+            }
+        });
     }
 }
 
 
 
-module.exports = {
+module.exports = 
+{
     demo : function(query)
     {
         var checkin = query.checkin;
@@ -54,16 +87,14 @@ module.exports = {
         return result;
     },
 
-    call: function(query)
+    get: function(query)
     {
-        var dateformat = 'YYYYMMDD';
+        var dateformat = 'yyyymmdd';
         var checkin = Date.parseExact(query.checkin, dateformat);
         var checkout = Date.parseExact(query.checkout, dateformat);
         var city = query.city;
 
-        var querystring = require("querystring");
-        var datejs = require('datejs');
-
-        weatherApi.apiByCityName(querystring.stringify(city), checkin.getTime(), checkout.getTime());
+        //var cityId = weatherApi.apiGetCityId(city);
+        weatherApi.apiByCityName(city, checkin.getTime()/1000, checkout.getTime()/1000);
     }
 }
