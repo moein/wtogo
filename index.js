@@ -18,11 +18,14 @@ appGet('/api/top5', function(req){
 appGet('/api/weather', function(req)
 {
     var app = require('./app/weather');
-    req.query = {
-        checkin: '20140502',
-        checkout: '20140503',
-        city: 'London'
-    };
+    if(req.query.city === undefined)
+    {
+        req.query = {
+            checkin: '20140502',
+            checkout: '20141023',
+            city: 'London'
+        };
+    }
     app.get(req.query);
 });
 
