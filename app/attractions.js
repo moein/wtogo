@@ -8,18 +8,30 @@ module.exports = function(query){
     requestedUrl += 'location=' + latitude + ',' + longitude;
     requestedUrl += '&radius=20000';
     requestedUrl += '&rankby=prominence';
-    requestedUrl += '&types=stadium|aquarium';
+    requestedUrl += '&types=stadium|aquarium|art_gallery|church|museum|zoo';
     requestedUrl += '&key=AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
-
-    console.log(requestedUrl);
 
     var request = require('request');
 
     request(requestedUrl, function(err, response, body) {
         if (200 == response.statusCode && null === err) {
-            console.log(response.body);
+
+            var jsonData = JSON.parse(response.body);
+            var resultList = [];
+
+            for (var i = 0; i < jsonData.results.length; i++) {
+                var name = jsonData.results[i]['name'];
+                var address = jsonData.results[i]['vicinity'];
+                var result = {};
+                result['name'] = name;
+                result['address'] = address;
+                resultList.push(result);
+            }
+
+            resultList = JSON.stringify(resultList);
+
             var resp = require('../lib/response');
-            resp.send(response.body);
+            resp.send(resultList);
         } else {
             return err;
         }
