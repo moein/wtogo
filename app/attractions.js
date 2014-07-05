@@ -1,14 +1,17 @@
 module.exports = function(query){
-    var city = query.city;
+    var latitude = query.latitude;
+    var longitude = query.longitude;
     var KEY = 'AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
 
     var requestedUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
 
-    requestedUrl += 'location=-33.8670522,151.1957362'; // Todo: as a parameter
+    requestedUrl += 'location=' + latitude + ',' + longitude;
     requestedUrl += '&radius=20000';
     requestedUrl += '&rankby=prominence';
     requestedUrl += '&types=stadium|aquarium';
     requestedUrl += '&key=AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
+
+    console.log(requestedUrl);
 
     var request = require('request');
 
@@ -21,26 +24,4 @@ module.exports = function(query){
             return err;
         }
     });
-
-    // var result = {
-    //     "attractions": [
-    //         {
-    //             "id": 1,
-    //             "name": "Parque del retiro",
-    //             "image": "retiro.jpg"
-    //         },
-    //         {
-    //             "id": 2,
-    //             "name": "Parque del retiro jesus",
-    //             "image": "retiro.jpg"
-    //         },
-    //         {
-    //             "id": 3,
-    //             "name": "Parque del retiro antonio",
-    //             "image": "retiro.jpg"
-    //         },
-    //     ]
-    // };
-
-    // return result;
 };
