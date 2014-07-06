@@ -82,8 +82,8 @@ var LifeComparison = Class.extend({
     },
 
     sendErrorMessage: function() {
-        var responseText = {status: 500, msg: "Check the values please"};
-        this.response.send(JSON.stringify(responseText));
+        var responseText = {msg: "Check the values please"};
+        this.response.send(400, JSON.stringify(responseText));
     }
 });
 
