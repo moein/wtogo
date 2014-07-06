@@ -37,7 +37,7 @@ var Attraction = Class.extend({
         requestedUrlPlaces += '&radius=50000';
         requestedUrlPlaces += '&rankby=prominence';
         requestedUrlPlaces += '&types=stadium|aquarium|art_gallery|church|museum|zoo';
-        requestedUrlPlaces += '&key=AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
+        requestedUrlPlaces += '&key=' + require('../config/config').googleApiKey;
 
         var requestUrlDetails = 'https://maps.googleapis.com/maps/api/place/details/json?';
         var requestUrlPicture = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=200';

@@ -1,7 +1,7 @@
 var _ = require('underscore');
 
 var TRV_SUGGEST_URL = 'http://www.trivago.com/search/com-US-US/v8_06_04_ac_8318_cache/suggest?q=';
-var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=bfbcad4b4e0653a46fe2f0314a527691&format=json&sort=interestingness-desc&tag_mode=all&tags=cityview,';
+var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + require('../config/config').flickrApiKey + '&format=json&sort=interestingness-desc&tag_mode=all&tags=cityview,';
 var FLICKR_IMAGE_URL = 'https://farm{farm}.staticflickr.com/{server}/{id}_{secret}.jpg';
 var MAX_RESULT_COUNT = 5;
 
