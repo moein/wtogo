@@ -1,9 +1,10 @@
 var _ = require('underscore');
 
 var TRV_SUGGEST_URL = 'http://www.trivago.com/search/com-US-US/v8_06_04_ac_8318_cache/suggest?q=';
-var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=bfbcad4b4e0653a46fe2f0314a527691&format=json&sort=interestingness-desc&tag_mode=all&tags=cityview,';
+var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + require('../config/config').flickrApiKey + '&format=json&sort=interestingness-desc&tag_mode=all&tags=cityview,';
 var FLICKR_IMAGE_URL = 'https://farm{farm}.staticflickr.com/{server}/{id}_{secret}.jpg';
 var MAX_RESULT_COUNT = 5;
+var DEFAULT_IMAGE = 'https//c1.staticflickr.com/9/8528/8510277140_1f361bf6f2_b.jpg';
 
 var Top5 = Class.extend({
     init: function(response) {
@@ -53,11 +54,16 @@ var Top5 = Class.extend({
         request(url, _.bind(function(err, response, body){
             if (200 === response.statusCode && null === err) {
                 var photo = this.parseJsonp(body).photos.photo[0];
-                var imageUrl = FLICKR_IMAGE_URL
+                var imageUrl;
+                if (photo === undefined) {
+                    imageUrl = DEFAULT_IMAGE;
+                } else {
+                    imageUrl = FLICKR_IMAGE_URL
                                 .replace('{server}', photo.server)
                                 .replace('{id}', photo.id)
                                 .replace('{farm}', photo.farm)
                                 .replace('{secret}', photo.secret);
+                }
 
                 callback(imageUrl);
             } else {
@@ -132,11 +138,7 @@ var Top5 = Class.extend({
         var query = 'SELECT longitude_search, latitude_search, city_search, country_search, ' + sumSelect + ' FROM hackathon.trv_data WHERE platform_search = "' +  platform + '" AND (' + conditions.join(' OR ') + ') GROUP BY CONCAT(longitude_search, latitude_search) ORDER BY count DESC LIMIT ' + MAX_RESULT_COUNT;
 
         var mysql      = require('mysql');
-        var connection = mysql.createConnection({
-            host     : '192.168.5.167',
-            user     : 'tsp',
-            password : 'tsp'
-        });
+        var connection = mysql.createConnection(require('../config/config').db);
 
         this.results = [];
 
