@@ -22,6 +22,7 @@ var isValidUrl = function(url)
 }
 
 $content.bind('content_change', function() {
+    WTOGO.comparison.closeComparison();
     WTOGO.user.getUserInfo();
     WTOGO.suggestions.getSuggestions();
 });

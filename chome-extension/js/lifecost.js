@@ -73,7 +73,6 @@ WTOGO.lifecost = {
     },
 
     cleanString: function(string) {
-        string = string.replace(new RegExp(/\s/g),"+");
         string = string.replace(new RegExp(/[àáâãäå]/g),"a");
         string = string.replace(new RegExp(/æ/g),"ae");
         string = string.replace(new RegExp(/ç/g),"c");
@@ -84,7 +83,7 @@ WTOGO.lifecost = {
         string = string.replace(new RegExp(/œ/g),"oe");
         string = string.replace(new RegExp(/[ùúûü]/g),"u");
         string = string.replace(new RegExp(/[ýÿ]/g),"y");
-        string = string.replace(new RegExp(/\W/g),"");
+        string = string.replace(new RegExp(/\s/g),"+");
 
         return string;
     }

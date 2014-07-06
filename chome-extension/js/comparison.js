@@ -14,8 +14,9 @@ WTOGO.comparison = {
 
     clearContainer: function ()
     {
-        $('#js_pricesearch_transparency').show();
-        $('#js_itemlist').empty();
+        $('#js_pricesearch_transparency').slideDown();
+        $('.wtogo_comparison').remove();
+        $('#js_itemlist').hide();
         $('#js_pagination').hide();
     },
 
@@ -31,7 +32,7 @@ WTOGO.comparison = {
         $('.wtogo_comparison').append('<div class="wtogo_attractions"></div>');
 
         $('.wtogo_close_wrapper').click(function () {
-            this.closeComparison();
+            WTOGO.comparison.closeComparison();
         });
     },
 
@@ -45,6 +46,10 @@ WTOGO.comparison = {
 
     closeComparison: function () {
         $('#js_pricesearch_transparency').show();
-        $('.wtogo_comparison').empty();
+        $('.wtogo_comparison').remove();
+        this.count = 0;
+        $('#js_itemlist').show();
+        $('#js_pagination').show();
+        $('#js_pricesearch_transparency').slideUp();
     }
 }
