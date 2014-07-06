@@ -4,6 +4,7 @@ var TRV_SUGGEST_URL = 'http://www.trivago.com/search/com-US-US/v8_06_04_ac_8318_
 var FLICKR_API_URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + require('../config/config').flickrApiKey + '&format=json&sort=interestingness-desc&tag_mode=all&tags=cityview,';
 var FLICKR_IMAGE_URL = 'https://farm{farm}.staticflickr.com/{server}/{id}_{secret}.jpg';
 var MAX_RESULT_COUNT = 5;
+var DEFAULT_IMAGE = 'https://c1.staticflickr.com/9/8528/8510277140_1f361bf6f2_b.jpg';
 
 var Top5 = Class.extend({
     init: function(response) {
@@ -53,11 +54,16 @@ var Top5 = Class.extend({
         request(url, _.bind(function(err, response, body){
             if (200 === response.statusCode && null === err) {
                 var photo = this.parseJsonp(body).photos.photo[0];
-                var imageUrl = FLICKR_IMAGE_URL
+                var imageUrl;
+                if (photo === undefined) {
+                    imageUrl = DEFAULT_IMAGE;
+                } else {
+                    imageUrl = FLICKR_IMAGE_URL
                                 .replace('{server}', photo.server)
                                 .replace('{id}', photo.id)
                                 .replace('{farm}', photo.farm)
                                 .replace('{secret}', photo.secret);
+                }
 
                 callback(imageUrl);
             } else {
