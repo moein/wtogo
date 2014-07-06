@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 require('./lib/class');
-require('underscore');
 
 var args = process.argv.slice(2);
 
@@ -29,16 +28,16 @@ appGet('/api/weather', function(req)
     require('./app/weather')(req.query);
 });
 
-appGet('/api/life-comparison', function(req){
-    require('./app/life-comparison')(req.query);
+app.get('/api/life-comparison', function(req, res){
+    require('./app/life-comparison')(res).run(req.query);
 });
 
 app.get('/api/attractions', function(req, res){
     require('./app/attractions')(res).run(req.query);
 });
 
-appGet('/api/city-country', function(req){
-    require('./app/city-country')(req.query);
+app.get('/api/city-country', function(req, res){
+    require('./app/city-country')(res).run(req.query);
 });
 
 if(args[0] === undefined)
