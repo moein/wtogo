@@ -5,7 +5,7 @@ var Attraction = Class.extend({
         this.response = response;
     },
     run: function(query) {
-        var resultList = ['root'];
+        var resultList = [];
         
         var photoFunc = function(i, placesList, maxResult){
             return function(err, response, body) {
@@ -20,7 +20,7 @@ var Attraction = Class.extend({
                 element['picture'] = urlPicture;
                 resultList.push(element);
 
-                if (resultList.length == maxResult+1) {
+                if (resultList.length == maxResult) {
                     resultList = JSON.stringify(resultList);
                     this.response.send(resultList);
                 }
@@ -40,7 +40,7 @@ var Attraction = Class.extend({
         requestedUrlPlaces += '&key=AIzaSyBhoBtDtVX5tr0UiDhKWtn0PJC8DVQ13PA';
 
         var requestUrlDetails = 'https://maps.googleapis.com/maps/api/place/details/json?';
-        var requestUrlPicture = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=200';
+        var requestUrlPicture = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=100';
 
         var request = require('request');
 
@@ -48,6 +48,7 @@ var Attraction = Class.extend({
             if (200 === response.statusCode && null === err) {
                 var placesList = JSON.parse(response.body);
                 var length  = placesList.results.length;
+                var maxResult = (length < 5 ) ? length : 5;
                 var maxResult = (length < 5 ) ? length : 5;
 
                 for (var i = 0; i < maxResult; i++)
