@@ -11,8 +11,8 @@
   "content_scripts": [
     {
       "matches": ["http://www.trivago.com/*"],
-      "js": ["jquery.min.js", "user.js", "suggestions.js", "comparison.js", "contentscript.js"],
-      "css": ["style.css"]
+      "js": ["lib/jquery.min.js", "config/config.js", "js/user.js", "js/suggestions.js", "js/comparison.js", "js/lifecost.js", "js/weather.js", "js/attractions.js", "contentscript.js"],
+      "css": ["css/style.css"]
     }
   ], 
  "permissions": 
