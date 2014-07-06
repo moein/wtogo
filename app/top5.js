@@ -132,11 +132,7 @@ var Top5 = Class.extend({
         var query = 'SELECT longitude_search, latitude_search, city_search, country_search, ' + sumSelect + ' FROM hackathon.trv_data WHERE platform_search = "' +  platform + '" AND (' + conditions.join(' OR ') + ') GROUP BY CONCAT(longitude_search, latitude_search) ORDER BY count DESC LIMIT ' + MAX_RESULT_COUNT;
 
         var mysql      = require('mysql');
-        var connection = mysql.createConnection({
-            host     : '192.168.5.167',
-            user     : 'tsp',
-            password : 'tsp'
-        });
+        var connection = mysql.createConnection(require('../config/config').db);
 
         this.results = [];
 
