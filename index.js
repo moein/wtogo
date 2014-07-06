@@ -17,16 +17,9 @@ appGet('/api/top5', function(req){
     require('./app/top5')(req.query);
 });
 
-appGet('/api/weather', function(req)
+app.get('/api/weather', function(req, res)
 {
-    if(req.query.city === undefined) {
-        req.query = {
-            checkin: '20140502',
-            checkout: '20140510',
-            city: 'Cordoba, mx'
-        };
-    }
-    require('./app/weather')(req.query);
+    require('./app/weather')(res).run(req.query);
 });
 
 appGet('/api/life-comparison', function(req){
