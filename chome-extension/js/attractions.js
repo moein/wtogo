@@ -1,8 +1,9 @@
 var WTOGO = WTOGO || {};
 
 WTOGO.attractions = {
-    displayAttractions: function (data)
+    getAttractions: function (data)
     {
+        console.log('Getting attractions...');
         var userRequest = {};
         userRequest.latitude = data.request.destination.latitude;
         userRequest.longitude = data.request.destination.longitude;
@@ -13,24 +14,26 @@ WTOGO.attractions = {
             data: userRequest,
             success: function(data)
             {
-                var response = JSON.parse(data);
-                WTOGO.comparison.addAttractionsContent(response);
+                WTOGO.attractions.addContent(JSON.parse(data));
+                WTOGO.comparison.hideLoader();
             }
         });
     },
 
-    addAttractionsContent: function (attractions)
+    addContent: function (attractions)
     {
-        attractions.forEach( function (attraction) {
-            var content = '<div class="wtogo_attraction">';
-            content += '<div class="container">';
-            content += '<img src="' + attraction.picture + '" />';
-            content += '<p class="name">' + attraction.name + '</p>';
-            content += '<p class="address">' + attraction.address + '</p>';
-            content += '</div>';
-            content += '</div>';
+        var content = '<h2>Attractions in ' + WTOGO.user.request.destination.city + '</h2>';
 
-            $('.attractions').append(content);
+        attractions.forEach( function (attraction) {
+            content += '<div class="wtogo_attraction">';
+                content += '<div class="container">';
+                content += '<img src="' + attraction.picture + '" />';
+                content += '<p class="name">' + attraction.name + '</p>';
+                content += '<p class="address">' + attraction.address + '</p>';
+                content += '</div>';
+            content += '</div>';
         });
+
+        $('.wtogo_attractions').append(content);
     }
 }
