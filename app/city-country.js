@@ -59,7 +59,7 @@ var CityCountry = Class.extend({
     },
 
     sendErrorMessage: function() {
-        this.response.send(JSON.stringify({status: 500, msg: "Wrong thing happened"}));
+        this.response.send(JSON.stringify(400, {msg: "Wrong thing happened"}));
     }
 });
 
