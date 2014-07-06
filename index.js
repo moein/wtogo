@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 require('./lib/class');
-require('underscore');
+require('datejs');
 
 var args = process.argv.slice(2);
 
@@ -13,8 +13,16 @@ function appGet(uri, func) {
     });
 }
 
-appGet('/api/top5', function(req){
-    require('./app/top5')(req.query);
+app.use(function(req, res, next){
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    
+    next();
+});
+
+app.get('/api/top5', function(req, res){
+    require('./app/top5')(res).run(req.query);
 });
 
 appGet('/api/weather', function(req)
