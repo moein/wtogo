@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+require('./lib/class');
+require('underscore');
 
 var args = process.argv.slice(2);
 
@@ -31,8 +33,8 @@ appGet('/api/life-comparison', function(req){
     require('./app/life-comparison')(req.query);
 });
 
-appGet('/api/attractions', function(req){
-    require('./app/attractions')(req.query);
+app.get('/api/attractions', function(req, res){
+    require('./app/attractions')(res).run(req.query);
 });
 
 appGet('/api/city-country', function(req){
