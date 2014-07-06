@@ -1,6 +1,10 @@
 var express = require('express');
 var app = express();
 require('./lib/class');
+<<<<<<< HEAD
+=======
+require('datejs');
+>>>>>>> b769d3aa8b28676365e43edc972cd410c66901d5
 
 var args = process.argv.slice(2);
 
@@ -12,8 +16,16 @@ function appGet(uri, func) {
     });
 }
 
-appGet('/api/top5', function(req){
-    require('./app/top5')(req.query);
+app.use(function(req, res, next){
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    
+    next();
+});
+
+app.get('/api/top5', function(req, res){
+    require('./app/top5')(res).run(req.query);
 });
 
 appGet('/api/weather', function(req)

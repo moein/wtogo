@@ -1,28 +1,16 @@
 var WTOGO = WTOGO || {};
 
 WTOGO.suggestions = {
-    api: {
-        url: 'localhost',
-        port: ':3000'
-    },
 
     cities: [],
 
-    suggestionContainer: '',
-
-    getSuggestions: function()
-    {
-        WTOGO.user.getUserInfo();
-        this.getCities();
-    },
-
-    getCities: function ()
+    getSuggestions: function ()
     {
         console.log('Getting suggestions...');
 
         var self = this;
         $.ajax({
-            url: 'http://' + this.api.url + this.api.port + '/api/top5',
+            url: 'http://' + config.api.url + config.api.port + '/api/top5',
             type: 'GET',
             data: WTOGO.user.request,
             success: function(data)
@@ -44,8 +32,6 @@ WTOGO.suggestions = {
         sidebar.append('<li class="sidebar_display"><div id="js_right_bar_history"><ul class="city_list history wtogo_suggestions">');
 
         sidebar.append('</ul></div></li>');
-
-        this.suggestionContainer = $('.wtogo_suggestions');
     },
 
     addCities: function ()
@@ -62,7 +48,7 @@ WTOGO.suggestions = {
             cityBlock += '</div></li></ul></div></li>';
             i++;
 
-            self.suggestionContainer.append(cityBlock);
+            $('.wtogo_suggestions').append(cityBlock);
         });
 
         self.addClickListener();
@@ -72,12 +58,11 @@ WTOGO.suggestions = {
         $('.wtogo_suggestion').click( function () {
             $('html, body').animate({ scrollTop: 0 }, 'slow');
 
-            // @TODO remove this lines when the Google Maps API returns data
-//            WTOGO.user.setOriginCity('Barcelona','Spain');
-
             WTOGO.user.request.destination = {
                 city: $(this).attr('data-city'),
-                country: $(this).attr('data-country')
+                country: $(this).attr('data-country'),
+                latitude: $(this).attr('data-latitude'),
+                longitude: $(this).attr('data-longitude')
             };
 
             WTOGO.comparison.displayComparison(WTOGO.user);

@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 var Attraction = Class.extend({
     init: function(response) {
         this.response = response;
@@ -5,8 +7,6 @@ var Attraction = Class.extend({
     run: function(query) {
         var resultList = ['root'];
         
-        var serverResponse = this.response;
-
         var photoFunc = function(i, placesList, maxResult){
             return function(err, response, body) {
                 var element = {};
@@ -22,7 +22,7 @@ var Attraction = Class.extend({
 
                 if (resultList.length == maxResult+1) {
                     resultList = JSON.stringify(resultList);
-                    serverResponse.send(resultList);
+                    this.response.send(resultList);
                 }
             }
         };
@@ -44,7 +44,7 @@ var Attraction = Class.extend({
 
         var request = require('request');
 
-        request(requestedUrlPlaces, function(err, response, body) {
+        request(requestedUrlPlaces, _.bind(function(err, response, body) {
             if (200 === response.statusCode && null === err) {
                 var placesList = JSON.parse(response.body);
                 var length  = placesList.results.length;
@@ -53,14 +53,14 @@ var Attraction = Class.extend({
                 for (var i = 0; i < maxResult; i++)
                 {
                     var url = requestUrlDetails + 'placeid=' + placesList.results[i]['place_id'] + '&key=' + KEY;
-                    request(url, photoFunc(i, placesList, maxResult));
+                    request(url, _.bind(photoFunc(i, placesList, maxResult), this));
                 }
             }
             else 
             {
                 return err;
             }
-        });
+        }, this));
     }
 });
 
