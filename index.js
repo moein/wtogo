@@ -17,7 +17,7 @@ app.use(function(req, res, next){
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
-    
+
     next();
 });
 
@@ -30,16 +30,16 @@ app.get('/api/weather', function(req, res)
     require('./app/weather')(res).run(req.query);
 });
 
-appGet('/api/life-comparison', function(req){
-    require('./app/life-comparison')(req.query);
+app.get('/api/life-comparison', function(req, res){
+    require('./app/life-comparison')(res).run(req.query);
 });
 
 app.get('/api/attractions', function(req, res){
     require('./app/attractions')(res).run(req.query);
 });
 
-appGet('/api/city-country', function(req){
-    require('./app/city-country')(req.query);
+app.get('/api/city-country', function(req, res){
+    require('./app/city-country')(res).run(req.query);
 });
 
 if(args[0] === undefined)
