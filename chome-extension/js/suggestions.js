@@ -55,7 +55,7 @@ WTOGO.suggestions = {
     },
 
     addClickListener: function () {
-        $('.wtogo_suggestion').click( function () {
+        $('.wtogo_suggestion').click(function () {
             $('html, body').animate({ scrollTop: 0 }, 'slow');
 
             WTOGO.user.request.destination = {

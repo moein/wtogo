@@ -1,9 +1,9 @@
 var WTOGO = WTOGO || {};
 
 WTOGO.weather = {
-
-    displayWeatherComparison: function (user)
+    getWeatherComparison: function (user)
     {
+        console.log('Getting weather...');
         var userRequest = {};
         userRequest.city = user.origin.city + ',' + user.origin.country;
         userRequest.checkin = user.request.checkin;
@@ -31,14 +31,15 @@ WTOGO.weather = {
                         var response = JSON.parse(data);
                         weather.destination = response;
 
-                        WTOGO.comparison.addWeatherComparisonContent(weather, user.request.destination.city);
+                        WTOGO.weather.addContent(weather);
+                        WTOGO.comparison.hideLoader();
                     }
                 });
             }
         });
     },
 
-    addWeatherComparisonContent: function (weather, destination_city)
+    addContent: function (weather)
     {
         var content = '<h3>Average weather for the selected date</h3>';
 
@@ -47,7 +48,7 @@ WTOGO.weather = {
         content += '<thead>';
             content += '<tr>';
                 content += '<td>&nbsp;</td>';
-                content += '<td><b>' + destination_city + '</b></td>';
+                content += '<td><b>' + WTOGO.user.origin.city + '</b></td>';
                 content += '<td><b>' + WTOGO.user.request.destination.city + '</b></td>';
             content += '</tr>';
         content += '</thead>';
@@ -93,6 +94,6 @@ WTOGO.weather = {
         content += '</tbody>';
         content += '</table>';
 
-        $('.weather-comparison').append(content);
+        $('.wtogo_weather').append(content);
     }
 }
